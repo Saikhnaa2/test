@@ -28,9 +28,13 @@ export const addLunch = async (req: Request, res: Response): Promise<any> => {
   const { users, paid } = req.body;
   let paidUser = findData(UserModel, parseInt(paid))
   for (let user of users) {
-    let partUser = findData(UserModel, parseInt(user.userId));
-    partUser.expenditures.push({ user: paidUser, price: user.price, fend: false });
-    paidUser.receivables.push({ user: partUser, price: user.price, fend: false });
+    let partUser = findData(UserModel, parseInt(user?.userId));
+    console.log(paidUser);
+    console.log(partUser);
+    partUser.expenditures?.push({ user: paidUser, price: user.price, fend: false });
+    console.log(partUser);
+    paidUser.receivables?.push({ user: partUser, price: user.price, fend: false });
+    console.log(paidUser);
   }
   
   const data = { ...req.body, id: genId++ };

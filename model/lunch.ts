@@ -6,7 +6,7 @@ export interface oneLunch {
 export interface Lunch {
   id: number;
   price: number;
-  users: [oneLunch];
+  users: [oneLunch] | [];
   paid: number;
 }
 

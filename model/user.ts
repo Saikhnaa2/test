@@ -1,12 +1,12 @@
 export interface User {
   id: number;
   name: string;
-  receivables?: Array<Much>;
-  expenditures?: Array<Much>;
+  receivables: Array<Much> | [];
+  expenditures: Array<Much> | [];
 }
 
 interface Much {
-  user: User;
+  user: Array<User> | [];
   price: number;
 }
 

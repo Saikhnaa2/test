@@ -1,6 +1,6 @@
 import { LunchModel } from "../model/lunch";
 import { UserModel } from "../model/user";
-import { haveData } from "../utils/helper";
+import { Destroy, findData, Create, UpdateOneData } from "../utils";
 export const getLunchs = async (req, res) => {
     res.status(200).json({
         success: true,
@@ -8,43 +8,59 @@ export const getLunchs = async (req, res) => {
     });
 };
 export const getLunch = async (req, res) => {
-    for (let lunch of LunchModel)
-        if (lunch.id === parseInt(req.params.id))
-            return res.status(200).json({
-                success: true,
-                data: lunch
-            });
+    const lunch = findData(LunchModel, parseInt(req.params.id));
+    if (lunch)
+        return res.status(200).json({
+            success: true,
+            data: lunch
+        });
     res.status(200).json({
         success: false,
     });
 };
 let genId = 1;
 export const addLunch = async (req, res) => {
-    const { user } = req.body;
-    console.log(haveData(UserModel, parseInt(user)));
-    if (haveData(UserModel, parseInt(user)) === false)
-        return res.status(200).json({
-            success: false,
-        });
+    const { users, paid } = req.body;
+    let paidUser = findData(UserModel, parseInt(paid));
+    for (let user of users) {
+        let partUser = findData(UserModel, parseInt(user?.userId));
+        console.log(paidUser);
+        console.log(partUser);
+        partUser.expenditures?.push({ user: paidUser, price: user.price, fend: false });
+        console.log(partUser);
+        paidUser.receivables?.push({ user: partUser, price: user.price, fend: false });
+        console.log(paidUser);
+    }
     const data = { ...req.body, id: genId++ };
-    LunchModel.push(data);
+    Create(LunchModel, data);
     res.status(200).json({
         success: true,
         data
     });
 };
 export const deleteLunch = async (req, res) => {
-    for (let i = 0; i < LunchModel.length; i++)
-        if (LunchModel[i].id === parseInt(req.params.id)) {
-            LunchModel.splice(i, 1);
-            return res.status(200).json({
-                success: true
-            });
-        }
+    const d = Destroy(LunchModel, parseInt(req.params.id));
+    if (d)
+        res.status(200).json({
+            success: true
+        });
     res.status(200).json({
         success: false,
         message: "tanii lunch id buruu bn!!!"
     });
 };
-// export const addToLunch = async (req: Request, res: Response): Promise<any> => { 
-// }
+export const updateLunch = async (req, res) => {
+    const { userId } = req.body;
+    let lunch = findData(LunchModel, parseInt(req.params.id));
+    for (let i = 0; i < lunch?.users?.length; i++) {
+        if (lunch.users.userId === parseInt(userId)) {
+            UpdateOneData(lunch.users, req.body);
+            return res.status(200).json({
+                success: true,
+            });
+        }
+    }
+    res.status(200).json({
+        success: false,
+    });
+};

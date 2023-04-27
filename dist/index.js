@@ -1,9 +1,10 @@
 import express from "express";
 import bodyParser from 'body-parser';
-import lunchRouter from "./routes/lunchRoute";
+import { lunchRouter, userRouter } from "./routes";
 const app = express();
 app.use(bodyParser.json());
-app.use("/api/v1/lunch", lunchRouter);
-app.listen(3000, () => {
-    console.log('App listening on port 3000');
+app.use("/lunch", lunchRouter);
+app.use("/user", userRouter);
+app.listen(8000, () => {
+    console.log('App listening on port 8000');
 });
